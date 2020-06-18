@@ -5,13 +5,18 @@
 #
 
 # Pull base image.
-FROM ubuntu:14.04
+FROM ubuntu:20.04
 
 # Install.
+ADD tzdata/preseed.txt /tmp/preseed.txt
 RUN \
+  export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && \
+  debconf-set-selections /tmp/preseed.txt && \
   sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get -y upgrade && \
+  apt-get install -y apt-utils && \
+  apt-get install -y ca-certificates && \
   apt-get install -y build-essential && \
   apt-get install -y software-properties-common && \
   apt-get install -y byobu curl git htop man unzip vim wget && \
